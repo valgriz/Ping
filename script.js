@@ -1,16 +1,25 @@
-var game = new Phaser.Game(800,600, Phaser.AUTO, '',{preload: preload, create: create, update: update});
+var game = new Phaser.Game(820, 560, Phaser.AUTO, '',{preload: preload, create: create, update: update});
 
 this.game.stage.scape.pageAlignHorizontally = true;
 this.game.stage.scale.pageAlighVertically = true;
 this.game.stage.scale.refresh();
 
 function preload(){
-	game.load.image('back1', '/assets/back1.png');
+	game.load.image('back1', '/assets/back2.png');
 	game.load.image('paddle', '/assets/paddle.png');
 	game.load.image('ball', '/assets/ball.png');
 	game.load.image('padding', '/assets/advpadding.png');
 
-	game.load.audio('sounda','/assets/sounda.mp3');
+	game.load.audio('s390','/sounds/390.mp3');
+	game.load.audio('s440','/sounds/440.mp3');
+	game.load.audio('s523','/sounds/523.mp3');
+	game.load.audio('s587','/sounds/587.mp3');
+	game.load.audio('s659','/sounds/659.mp3');
+	game.load.audio('s783','/sounds/783.mp3');
+	game.load.audio('s880','/sounds/880.mp3');
+	game.load.audio('s1046','/sounds/1046.mp3');
+	game.load.audio('s1174','/sounds/1174.mp3');
+
 
 }
 
@@ -29,16 +38,56 @@ var ballVel;
 var score;
 var scoreText;
 
-var sounda;
+var s1;
+var s2;
+var s3;
+var s4;
+var s5;
+var s6;
+var s7;
+var s8;
+var s9;
+var s10;
 
+var sounds;
 var space;
 var barPos;
+
+var timeConstant;
+var timeCounter;
+var pdx;
+
+var platX;
+var platY;
+var platW;
+var platH;
 
 function create(){
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.add.sprite(0,0,'back1');
 
 	ballVel =  [1,1,1,1,1,1,1,1,1,1];
+	timeConstant = 1;
+	timeCounter = 0;
+	pdx = 0;
+
+	platX = 16;
+	platY = 26;
+	platW = 8;
+	platH = 1;
+
+	s1 = game.add.audio('s390');
+	s2 = game.add.audio('s440');
+	s3 = game.add.audio('s523');
+	s4 = game.add.audio('s587');
+	s5 = game.add.audio('s659');
+	s6 = game.add.audio('s783');
+	s7 = game.add.audio('s880');
+	s8 = game.add.audio('s1046');
+	s9 = game.add.audio('s1174');
+	s10 = game.add.audio('s390');
+	
+	sounds = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10];
 
 	paddingGroup = game.add.group();
 	paddingGroup.enableBody = true;
@@ -63,7 +112,7 @@ function create(){
 	balls.enableBody = true;
 
 	for(var i = 0; i < 11; i++){
-		var ball = balls.create(36 + (i * 72), 40, 'ball');
+		var ball = balls.create((20 * 2) + (i * 80), 40, 'ball');
 		//ball.body.velocity.y = 600;
 		//ball.body.bounce.y = 1;
 		//ball.body.collideWorldBounds = true;
@@ -75,15 +124,15 @@ function create(){
 
 	paddleObj.body.allowGravity = false;
 
-	scoreText = game.add.text(16, 16,'Score: 0'), {fontSize: '32px', fill: '#000'};
+	//scoreText = game.add.text(16, 16,'Score: 0'), {fontSize: '32px', fill: '#000'};
 
 	score = 0;
 
-	sounda = game.add.audio('sounda');
+	
 
 	space.onDown.add(move, this);
 
-	barPos=0;
+	barPos = 0;
 }
 
 function update(){
@@ -91,33 +140,62 @@ function update(){
 	game.physics.arcade.collide(balls, paddleObj);
 
 	if(leftKey.isDown || aKey.isDown){
-		paddleObj.body.velocity.x = -450;
+		pdx = -1;
 	}else if(rightKey.isDown || dKey.isDown){
-		paddleObj.body.velocity.x = 450;
-	}else if(leftKey.is){
-
+		pdx = 1;
 	}else{
-	paddleObj.body.acceleration.x = -3 * paddleObj.body.velocity.x;	
+		pdx = 0;
 	}
 
-	if(paddleObj.x < 30){
-		paddleObj.x = 30;
-	} else if(paddleObj.x + game.cache.getImage('paddle').width > game.world.width - 30) {
-		paddleObj.x = game.world.width - game.cache.getImage('paddle').width - 30;
-	}
 
-	for(var i = 0; i < balls.length; i++){
-		var temp = balls.getAt(i);
-		temp.body.y += (20 * ballVel[i]);
-		if(temp.body.y > (20 * 28)){
-			ballVel[i] = -ballVel[i];
-			temp.body.y += 2 * (20 * ballVel[i]);
-		} else if(temp.body.y < (20 * 2)){
-			ballVel[i] = -ballVel[i];
-			temp.body.y += 2 * (20 * ballVel[i]);
-			sounda.play();
+
+	// if(paddleObj.x < 30){
+	// 	paddleObj.x = 30;
+	// } else if(paddleObj.x + game.cache.getImage('paddle').width > game.world.width - 30) {
+	// 	paddleObj.x = game.world.width - game.cache.getImage('paddle').width - 30;
+	// }
+
+
+	
+
+
+	if(timeCounter == timeConstant){
+		platX += pdx;
+		paddleObj.body.x = 20 * platX;
+		paddleObj.body.y = 20 * platY;
+
+		for(var i = 0; i < balls.length; i++){
+			var temp = balls.getAt(i);
+			temp.body.y += (20 * ballVel[i]);
+			
+			if(temp.body.y > (20 * ((game.world.height/20) - 2))){
+				ballVel[i] = -ballVel[i];
+				temp.body.y += 2 * (20 * ballVel[i]);
+			} else if(temp.body.y < (20 * 2)){
+				ballVel[i] = -ballVel[i];
+				temp.body.y += 2 * (20 * ballVel[i]);
+				//sounda.play();
+				var temps = sounds[i];
+				temps.play();
+
+			}
+
+			if((temp.body.y/20)== platY){
+				if((temp.body.x/20) + 1 > platX && (temp.body.x/20) < platX + platW ){
+					ballVel[i] = -ballVel[i];
+				}
+			}
 		}
 	}
+
+	if(timeCounter > timeConstant){
+		timeCounter = 0;
+	}
+
+
+
+	timeCounter++;
+
 
 	//game.physics.arcade.collide(paddingGroup, balls);
 
@@ -138,10 +216,15 @@ function update(){
 }
 
 function move(){
+	
 	barPos++;
-	if(barPos>2){
+	if(barPos>4){
 		barPos=0;
 	}
-	paddleObj.y = game.world.height - (40 + (135* barPos));
+	//paddleObj.y = game.world.height - ((20 * 2) + ((20 * 6)* barPos));
+	platY = (game.world.height/20) - (2 + (6 * barPos));
+
+	//original 6 * barPos
+	paddleObj.body.y = 20 * platY;
 	score = barPos;
 }
