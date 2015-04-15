@@ -5,20 +5,20 @@ this.game.stage.scale.pageAlighVertically = true;
 this.game.stage.scale.refresh();
 
 function preload(){
-	game.load.image('back1', '/assets/back2.png');
-	game.load.image('paddle', '/assets/paddle.png');
-	game.load.image('ball', '/assets/ball.png');
-	game.load.image('padding', '/assets/advpadding.png');
+	game.load.image('back1', '/btc2/assets/back2.png');
+	game.load.image('paddle', '/btc2/assets/paddle.png');
+	game.load.image('ball', '/btc2/assets/ball.png');
+	game.load.image('padding', '/btc2/assets/advpadding.png');
 
-	game.load.audio('s390','/sounds/390.mp3');
-	game.load.audio('s440','/sounds/440.mp3');
-	game.load.audio('s523','/sounds/523.mp3');
-	game.load.audio('s587','/sounds/587.mp3');
-	game.load.audio('s659','/sounds/659.mp3');
-	game.load.audio('s783','/sounds/783.mp3');
-	game.load.audio('s880','/sounds/880.mp3');
-	game.load.audio('s1046','/sounds/1046.mp3');
-	game.load.audio('s1174','/sounds/1174.mp3');
+	game.load.audio('s390','/btc2/sounds/390.mp3');
+	game.load.audio('s440','/btc2/sounds/440.mp3');
+	game.load.audio('s523','/btc2/sounds/523.mp3');
+	game.load.audio('s587','/btc2/sounds/587.mp3');
+	game.load.audio('s659','/btc2/sounds/659.mp3');
+	game.load.audio('s783','/btc2/sounds/783.mp3');
+	game.load.audio('s880','/btc2/sounds/880.mp3');
+	game.load.audio('s1046','/btc2/sounds/1046.mp3');
+	game.load.audio('s1174','/btc2/sounds/1174.mp3');
 
 
 }
@@ -112,7 +112,7 @@ function create(){
 	balls.enableBody = true;
 
 	for(var i = 0; i < 11; i++){
-		var ball = balls.create((20 * 2) + (i * 80), 40, 'ball');
+		var ball = balls.create((20 * 2) + (i * 80), 40 + ((0 * i)%460), 'ball');
 		//ball.body.velocity.y = 600;
 		//ball.body.bounce.y = 1;
 		//ball.body.collideWorldBounds = true;
@@ -222,7 +222,7 @@ function move(){
 		barPos=0;
 	}
 	//paddleObj.y = game.world.height - ((20 * 2) + ((20 * 6)* barPos));
-	platY = (game.world.height/20) - (2 + (6 * barPos));
+	platY = (game.world.height/20) - (2 + (3 * barPos));
 
 	//original 6 * barPos
 	paddleObj.body.y = 20 * platY;
